@@ -1,9 +1,9 @@
 
 function res = delay_SNR(scale);
 %clear;clc;close all
-addpath ../../data/
+addpath data/
 %% real data:
-%%
+%% load image and sensitivity maps to create multi-channel images
 load im1.mat
 load smaps.mat
 %%
@@ -16,7 +16,7 @@ Nc = size(smaps,3);
 channel_im = smaps .* repmat(im1, [1 1 Nc]);
 
 %figure,imshow3(abs(channel_im),[],[1 Nc])
-%% spiral data
+%% radial trajectory data
 Nacq = 256;
 Tramp = 15
 kshift = 0;
@@ -31,6 +31,7 @@ k = kx+1j*ky;
 % 
 N = [size(channel_im,1),size(channel_im,2)];                  % size of the target image
 
+%% change to spiral trajectory
 %load spiral.mat
 k_traj = zeros(3,size(k,1),size(k,2));
 k_traj(1,:,:) = real(k);
@@ -62,7 +63,6 @@ kx_true(1,:) = kx(1,:);
 % ky_true(1:2,:) = repmat(ky(1,:),[2 1]);
 % 
 % delay in y = -1
-
 ky_true(1:end-1,:) = ky(2:end,:); 
 ky_true(end,:) = ky(end,:); 
 % 
@@ -129,7 +129,7 @@ X_old_Car = Kcalib;
  while  (index<300)  && (incre>0.001) 
 
        index = index+1;
-       % part 2 solve for delta t  
+       % part 2 solve for X 
        X_new_Car = lowrank_thresh(X_old_Car,ksize,floor(wnRank*prod(ksize)));
        %rank = rank+0.2
        im_new = ifft2c(X_new_Car);
